@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Net;
     using System.Net.Sockets;
     using System.Text;
@@ -10,6 +11,7 @@
     internal sealed class Server : Disposable
     {
         private List<TcpClient> _clients = new List<TcpClient>();
+        private Dictionary<string, List<string>> _lostClients = new Dictionary<string, List<string>>();
         private TcpListener _listener;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly AsyncCallback _onAsyncReadComplete;
@@ -156,19 +158,43 @@
                 {
                     if (this._clients.Contains(asyncState.Client))
                     {
+                        _lostClients.Add(asyncState.Client.GetIP(), new List<string>());
                         this._clients.Remove(asyncState.Client);
                     }
                 }
             }
         }
 
-        public void OnTagRead(TagRead tagRead)
+        public void OnTagRead(/*TagRead tagRead,*/ string strToSend)
         {
             if (this._clients.Count >= 1)
             {
-                DateTime firstSeenTime = tagRead.Tag.FirstSeenTime;
-                long unixTime = GetUnixTime(firstSeenTime);
-                this.SendAll(Encoding.ASCII.GetBytes(string.Format("1,{0},{1},{2},1,0\n", tagRead.EPC, unixTime, firstSeenTime.Millisecond)));
+                if (_lostClients != null)
+                {
+                    foreach (var lostClient in _lostClients)
+                    {
+                        if (_clients.Any(x => x.GetIP() == lostClient.Key))
+                        {
+                            var readingsToSend = lostClient.Value;
+                            foreach (var readingToSend in readingsToSend)
+                            {
+                                this.SendAll(Encoding.ASCII.GetBytes(readingToSend.ToString()));
+                            }
+                        }
+                    }
+
+                    _lostClients = null;
+                }
+
+                //DateTime firstSeenTime = tagRead.Tag.FirstSeenTime;
+                //long unixTime = GetUnixTime(firstSeenTime);
+                //string strToSend = string.Format("1,{0},{1},{2},1,0\n", tagRead.EPC, unixTime, firstSeenTime.Millisecond));
+                this.SendAll(Encoding.ASCII.GetBytes(strToSend));
+
+                if (_lostClients != null && _lostClients.Count > 0)
+                {
+                    _lostClients.FirstOrDefault().Value.Add(strToSend);
+                }
             }
         }
 

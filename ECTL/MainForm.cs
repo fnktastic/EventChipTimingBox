@@ -2124,6 +2124,7 @@
                 {
                     if (this._stream != null)
                     {
+
                         this._writer.WriteLine(string.Format("{0}, {1}, {2}, {3}, {4}, {5}", new object[] { read.EPC, str, str2, read.Tag.PeakRssiInDbm, read.Tag.AntennaPortNumber, str3 }));
                         // формировать лист
                         ListViewItem _rec = new ListViewItem(tagReads.Count.ToString());
@@ -2140,10 +2141,19 @@
                     }
                     if (this._server != null)
                     {
-                        this._server.OnTagRead(read);
+                        long unixTime = GetUnixTime(read.Tag.FirstSeenTime);
+                        string stringToSend = string.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}@", read.EPC, unixTime, read.Tag.PeakRssiInDbm, read.Tag.AntennaPortNumber, str3, read.Tag.AntennaPortNumber.ToString(), Guid.NewGuid());
+                        this._server.OnTagRead(stringToSend);
                     }
                 }
             }
+        }
+
+        private static long GetUnixTime(DateTime dt)
+        {
+            DateTime time = new DateTime(0x7bc, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            TimeSpan span = (TimeSpan)(dt - time);
+            return Convert.ToInt64(span.TotalSeconds);
         }
 
         private void radioBtnFinishLine_CheckedChanged(object sender, EventArgs e)
