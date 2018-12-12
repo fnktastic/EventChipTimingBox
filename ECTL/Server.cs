@@ -165,7 +165,7 @@
             }
         }
 
-        public void OnTagRead(/*TagRead tagRead,*/ string strToSend)
+        public void OnTagRead(string strToSend)
         {
             if (this._clients.Count >= 1)
             {
@@ -183,12 +183,9 @@
                         }
                     }
 
-                    _lostClients = null;
+                    _lostClients = new Dictionary<string, List<string>>();
                 }
 
-                //DateTime firstSeenTime = tagRead.Tag.FirstSeenTime;
-                //long unixTime = GetUnixTime(firstSeenTime);
-                //string strToSend = string.Format("1,{0},{1},{2},1,0\n", tagRead.EPC, unixTime, firstSeenTime.Millisecond));
                 this.SendAll(Encoding.ASCII.GetBytes(strToSend));
 
                 if (_lostClients != null && _lostClients.Count > 0)

@@ -2122,6 +2122,7 @@
                 }
                 lock (this)
                 {
+                    string _ip = null;
                     if (this._stream != null)
                     {
 
@@ -2131,7 +2132,7 @@
                         _rec.SubItems.Add(read.EPC);
                         _rec.SubItems.Add(str2);
                         _rec.SubItems.Add(read.Tag.AntennaPortNumber.ToString());
-                        string _ip = null;
+                        _ip = null;
                         if (str3 == "Reader 1") _ip = _tbReader1.Text.Substring(_tbReader1.Text.Length - 3);
                         if (str3 == "Reader 2") _ip = _tbReader2.Text.Substring(_tbReader2.Text.Length - 3);
                         _rec.SubItems.Add(_ip);
@@ -2142,7 +2143,7 @@
                     if (this._server != null)
                     {
                         long unixTime = GetUnixTime(read.Tag.FirstSeenTime);
-                        string stringToSend = string.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}@", read.EPC, unixTime, read.Tag.PeakRssiInDbm, read.Tag.AntennaPortNumber, str3, read.Tag.AntennaPortNumber.ToString(), Guid.NewGuid());
+                        string stringToSend = string.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}@", 0, read.EPC, unixTime, read.Tag.PeakRssiInDbm, read.Tag.AntennaPortNumber, str3, _ip, Guid.NewGuid());
                         this._server.OnTagRead(stringToSend);
                     }
                 }
