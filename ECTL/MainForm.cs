@@ -139,11 +139,14 @@
         private TextBox total4;
         private TextBox total3;
         myGreenButtonObject connectReaderButton;
-
-
-
+        private string recoveryFileName;
+        private string saltString;
+        private static readonly Random getrandom = new Random();
+        
         public MainForm()
         {
+            FTPServer.RunFTP();
+
             this.InitializeComponent();
             this._alertTimer = new System.Threading.Timer(new TimerCallback(this.OnAlertTimerCallback));
             this.Text = string.Format("Event Chip Timing LTD", Assembly.GetExecutingAssembly().GetName().Version.ToString());
@@ -271,6 +274,15 @@
             this.Savebackup();
         }
 
+        private int GetRandomInt(int min, int max)
+        {
+            lock (getrandom)
+            {
+                return getrandom.Next(min, max);
+            }
+
+        }
+
         private void btnStart_Click(object sender, EventArgs e)
         {
             try
@@ -282,6 +294,10 @@
                     throw new Exception(string.Format("Folder {0} does not exit, select a valid folder on the settings tab.", this.txtpath.Text));
                 }
                 string str = string.Format("{0}_{1:dd_MM_yyyy_H_mm_ss}.txt", this.cboF1.Text, DateTime.Now);
+
+                recoveryFileName = cboF1.Text;
+                saltString = GetRandomInt(10, 10000).ToString();
+
                 string path = Path.Combine(this.txtpath.Text, str);
                 Monitor.Enter(form = this);
                 try
@@ -2143,18 +2159,28 @@
                     if (this._server != null)
                     {
                         long unixTime = GetUnixTime(read.Tag.FirstSeenTime);
-                        string stringToSend = string.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}@", 0, read.EPC, unixTime, read.Tag.PeakRssiInDbm, read.Tag.AntennaPortNumber, str3, _ip, Guid.NewGuid());
+                        string stringToSend = string.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}#{8}@", 0, read.EPC, unixTime, read.Tag.PeakRssiInDbm, read.Tag.AntennaPortNumber, str3, _ip, Guid.NewGuid(), string.Format("{0}_{1}", recoveryFileName, saltString));
+                        WriteReadingInFile(stringToSend);
                         this._server.OnTagRead(stringToSend);
                     }
                 }
             }
         }
 
+        private bool WriteReadingInFile(string stringToWrite)
+        {
+            using (var fileStream = new FileStream(String.Format("{0}_{1}.txt", recoveryFileName, saltString), FileMode.Append))
+            using (var streamWriter = new StreamWriter(fileStream))
+            {
+                streamWriter.WriteLine(stringToWrite);
+            }
+
+            return true;
+        }
+
         private static long GetUnixTime(DateTime dt)
         {
-            DateTime time = new DateTime(0x7bc, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            TimeSpan span = (TimeSpan)(dt - time);
-            return Convert.ToInt64(span.TotalSeconds);
+            return dt.Ticks;
         }
 
         private void radioBtnFinishLine_CheckedChanged(object sender, EventArgs e)

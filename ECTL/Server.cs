@@ -13,6 +13,8 @@
         private List<TcpClient> _clients = new List<TcpClient>();
         private Dictionary<string, List<string>> _lostClients = new Dictionary<string, List<string>>();
         private TcpListener _listener;
+        private const string ALL_CLIENTS = "unknown";
+        private string currentReading = string.Empty;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly AsyncCallback _onAsyncReadComplete;
 
@@ -156,43 +158,55 @@
             {
                 lock (this._clients)
                 {
-                    if (this._clients.Contains(asyncState.Client))
+                    if (this._clients.Contains(asyncState.Client) && _lostClients.Keys.Contains(asyncState.Client.GetIP()) == false)
                     {
-                        _lostClients.Add(asyncState.Client.GetIP(), new List<string>());
+                        _lostClients.Add(asyncState.Client.GetIP(), new List<string> { currentReading });
                         this._clients.Remove(asyncState.Client);
                     }
                 }
             }
         }
 
-        public void OnTagRead(string strToSend)
+        public void OnTagRead(string stringRead)
         {
+            currentReading = stringRead;
+
+            if (_clients.Count == 0)
+                foreach (var lostClient in _lostClients)
+                    lostClient.Value.Add(stringRead);
+
             if (this._clients.Count >= 1)
             {
-                if (_lostClients != null)
+                if (_lostClients.Count > 0)
                 {
                     foreach (var lostClient in _lostClients)
                     {
-                        if (_clients.Any(x => x.GetIP() == lostClient.Key))
+                        if (lostClient.Key == ALL_CLIENTS)
                         {
-                            var readingsToSend = lostClient.Value;
-                            foreach (var readingToSend in readingsToSend)
+                            lostClient.Value.ForEach(x =>
                             {
-                                this.SendAll(Encoding.ASCII.GetBytes(readingToSend.ToString()));
-                            }
+                                SendAll(Encoding.ASCII.GetBytes(x));
+                            });
+                        }
+
+                        else if (_clients.FirstOrDefault(x => x.GetIP() == lostClient.Key) != null)
+                        {
+                            var client = _clients.FirstOrDefault(x => x.GetIP() == lostClient.Key);
+                            // send to one client
+                            lostClient.Value.ForEach(x =>
+                            {
+                                SendAll(Encoding.ASCII.GetBytes(x));
+                            });
                         }
                     }
 
-                    _lostClients = new Dictionary<string, List<string>>();
+                    _lostClients.Clear();
                 }
 
-                this.SendAll(Encoding.ASCII.GetBytes(strToSend));
-
-                if (_lostClients != null && _lostClients.Count > 0)
-                {
-                    _lostClients.FirstOrDefault().Value.Add(strToSend);
-                }
+                SendAll(Encoding.ASCII.GetBytes(stringRead));
+                Console.WriteLine(stringRead);
             }
+
         }
 
         private void SendAll(byte[] data)

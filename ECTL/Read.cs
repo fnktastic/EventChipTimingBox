@@ -11,10 +11,11 @@
         public string ReaderNo { get; set; } //Reader Number (1 or 2)
         public string AntennaID { get; set; } //Antennta of th reader which recieves the data
         public string IPAddress { get; set; } //IP Address of REader (maybe not requiered)
+        public string Salt { get; set; }
 
         public override string ToString()
         {
-            return string.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}@", ID, UniqueID, TagID, TimeStamp, ReaderNo, AntennaID, IPAddress);
+            return string.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}@", ID, UniqueID, TagID, TimeStamp, ReaderNo, AntennaID, IPAddress, Salt);
         }
     }
 }
