@@ -20,7 +20,7 @@ namespace ECTL
             server.Start();
             server.OnReadRequest += new TftpServerEventHandler(server_OnReadRequest);
             server.OnWriteRequest += new TftpServerEventHandler(server_OnWriteRequest);
-            server.Start();
+            Console.WriteLine("Server is run.");
         }
 
         static void server_OnWriteRequest(ITftpTransfer transfer, EndPoint client)
