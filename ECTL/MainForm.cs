@@ -14,6 +14,7 @@
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Windows.Forms;
+    using System.Threading.Tasks;
 
     public class MainForm : Form
     {
@@ -145,8 +146,8 @@
         
         public MainForm()
         {
-            FTPServer.RunFTP();
-
+            Task.Run(() => FTPServer.RunFTP()); 
+            
             this.InitializeComponent();
             this._alertTimer = new System.Threading.Timer(new TimerCallback(this.OnAlertTimerCallback));
             this.Text = string.Format("Event Chip Timing LTD", Assembly.GetExecutingAssembly().GetName().Version.ToString());

@@ -11,22 +11,16 @@ namespace ECTL
     public class FTPServer
     {
         private static String ServerDirectory;
+        private static TftpServer server;
 
         public static void RunFTP()
         {
             ServerDirectory = Environment.CurrentDirectory;
-
-            Console.WriteLine("Running TFTP server for directory: " + ServerDirectory);
-            Console.WriteLine();
-            Console.WriteLine("Press any key to close the server.");
-
-            using (var server = new TftpServer())
-            {
-                server.OnReadRequest += new TftpServerEventHandler(server_OnReadRequest);
-                server.OnWriteRequest += new TftpServerEventHandler(server_OnWriteRequest);
-                server.Start();
-                Console.Read();
-            }
+            server = new TftpServer();
+            server.Start();
+            server.OnReadRequest += new TftpServerEventHandler(server_OnReadRequest);
+            server.OnWriteRequest += new TftpServerEventHandler(server_OnWriteRequest);
+            server.Start();
         }
 
         static void server_OnWriteRequest(ITftpTransfer transfer, EndPoint client)
