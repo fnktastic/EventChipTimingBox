@@ -143,9 +143,13 @@
         private string recoveryFileName;
         private string saltString;
         private static readonly Random getrandom = new Random();
-        
+        private bool _isTestMoode;
+        private ReadingEmulator readingEmulator;
+
         public MainForm()
         {
+            _isTestMoode = true;
+            readingEmulator = new ReadingEmulator();
             Task.Run(() => FTPServer.RunFTP()); 
             
             this.InitializeComponent();
@@ -300,22 +304,33 @@
                 saltString = GetRandomInt(10, 10000).ToString();
 
                 string path = Path.Combine(this.txtpath.Text, str);
-                Monitor.Enter(form = this);
-                try
+                if (!_isTestMoode)
                 {
-                    this._server = new Server();
-                    this._server.Listen(ECTL.Properties.Settings.Default.TcpIpPort);
+                    Monitor.Enter(form = this);
+                    try
+                    {
+                        this._server = new Server();
+                        this._server.Listen(ECTL.Properties.Settings.Default.TcpIpPort);
+                    }
+                    catch
+                    {
+                        this._server.Dispose();
+                        this._server = null;
+                    }
+                    finally
+                    {
+                        Monitor.Exit(form);
+                    }
                 }
-                catch
-                {
-                    this._server.Dispose();
-                    this._server = null;
-                }
-                finally
-                {
-                    Monitor.Exit(form);
-                }
-                this.StartAllReaders();
+                if (_isTestMoode)
+                    Task.Run(() =>
+                    {
+                        readingEmulator.Start();
+                    });
+                else
+                    this.StartAllReaders();
+
+
                 this.textBoxLastTagRead.Text = (string) (this.textBoxLastTimeRead.Text = null);
                 lock (this)
                 {
@@ -1857,31 +1872,34 @@
 
         private void OnConnectClicked(object sender, EventArgs e)
         {
-            if (this.checkLogerValidation())
+            if (!_isTestMoode)
             {
-                if (this._chxReader1Enabled.Checked)
+                if (this.checkLogerValidation())
                 {
-                    if (this._tbReader1.Text.Validate())
+                    if (this._chxReader1Enabled.Checked)
                     {
-                        this._reader1 = this.ConnectReader(this._tbReader1.Text, this._reader1Channel, ECTL.Properties.Settings.Default.Reader1Power);
+                        if (this._tbReader1.Text.Validate())
+                        {
+                            this._reader1 = this.ConnectReader(this._tbReader1.Text, this._reader1Channel, ECTL.Properties.Settings.Default.Reader1Power);
+                        }
+                        else
+                        {
+                            MessageBox.Show(this, "Reader 1's Address is Empty !!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                        }
                     }
-                    else
+                    if (this._chxReader2Enabled.Checked)
                     {
-                        MessageBox.Show(this, "Reader 1's Address is Empty !!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                        if (this._tbReader2.Text.Validate())
+                        {
+                            this._reader2 = this.ConnectReader(this._tbReader2.Text, this._reader2Channel, ECTL.Properties.Settings.Default.Reader2Power);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Reader 2's Address is Empty !!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                        }
                     }
+                    this.Refresh();
                 }
-                if (this._chxReader2Enabled.Checked)
-                {
-                    if (this._tbReader2.Text.Validate())
-                    {
-                        this._reader2 = this.ConnectReader(this._tbReader2.Text, this._reader2Channel, ECTL.Properties.Settings.Default.Reader2Power);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Reader 2's Address is Empty !!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-                    }
-                }
-                this.Refresh();
             }
         }
 
@@ -2157,23 +2175,35 @@
                         //конец
                         this._writer.Flush();
                     }
-                    if (this._server != null)
+                    if (_server != null)
                     {
                         long unixTime = GetUnixTime(read.Tag.FirstSeenTime);
-                        string stringToSend = string.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}#{8}@", 0, read.EPC, unixTime, read.Tag.PeakRssiInDbm, read.Tag.AntennaPortNumber, str3, _ip, Guid.NewGuid(), string.Format("{0}_{1}", recoveryFileName, saltString));
-                        WriteReadingInFile(stringToSend);
-                        this._server.OnTagRead(stringToSend);
+                        var readingToSend = new Read()
+                        {
+                            EPC = read.EPC,
+                            Time = unixTime.ToString(),
+                            PeakRssiInDbm = read.Tag.PeakRssiInDbm.ToString(),
+                            AntennaNumber = read.Tag.AntennaPortNumber.ToString(),
+                            ReaderNumber = str3,
+                            IpAddress = _ip,
+                            UniqueReadingID = Guid.NewGuid().ToString(),
+                            Salt = string.Format("{0}_{1}", recoveryFileName, saltString)
+
+                        };
+
+                        WriteReadingInFile(readingToSend);
+                        _server.OnTagRead(readingToSend);
                     }
                 }
             }
         }
 
-        private bool WriteReadingInFile(string stringToWrite)
+        private bool WriteReadingInFile(Read read)
         {
-            using (var fileStream = new FileStream(String.Format("{0}_{1}.txt", recoveryFileName, saltString), FileMode.Append))
+            using (var fileStream = new FileStream(String.Format("{0}.txt", read.Salt), FileMode.Append))
             using (var streamWriter = new StreamWriter(fileStream))
             {
-                streamWriter.WriteLine(stringToWrite);
+                streamWriter.WriteLine(read);
             }
 
             return true;

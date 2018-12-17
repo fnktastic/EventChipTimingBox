@@ -167,13 +167,14 @@
             }
         }
 
-        public void OnTagRead(string stringRead)
+        public void OnTagRead(Read readToSend)
         {
-            currentReading = stringRead;
+            Debug.WriteLine(readToSend.ToString());
+            currentReading = readToSend.ToString();
 
             if (_clients.Count == 0)
                 foreach (var lostClient in _lostClients)
-                    lostClient.Value.Add(stringRead);
+                    lostClient.Value.Add(currentReading);
 
             if (this._clients.Count >= 1)
             {
@@ -203,8 +204,8 @@
                     _lostClients.Clear();
                 }
 
-                SendAll(Encoding.ASCII.GetBytes(stringRead));
-                Console.WriteLine(stringRead);
+                SendAll(Encoding.ASCII.GetBytes(currentReading));
+                Console.WriteLine(currentReading);
             }
 
         }

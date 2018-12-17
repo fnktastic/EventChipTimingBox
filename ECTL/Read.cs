@@ -4,18 +4,19 @@
 
     public class Read
     {
-        public int ID { get; set; } //Autoincrement ID
-        public Guid UniqueID { get; set; } //Unique Reading ID
-        public string TagID { get; set; } //Tag ID
-        public string TimeStamp { get; set; } //Time stamp with milliseconds
-        public string ReaderNo { get; set; } //Reader Number (1 or 2)
-        public string AntennaID { get; set; } //Antennta of th reader which recieves the data
-        public string IPAddress { get; set; } //IP Address of REader (maybe not requiered)
+        public int ID { get; set; }
+        public string EPC { get; set; }
+        public string Time { get; set; }
+        public string PeakRssiInDbm { get; set; }
+        public string AntennaNumber { get; set; }
+        public string ReaderNumber { get; set; }
+        public string IpAddress { get; set; }
+        public string UniqueReadingID { get; set; }
         public string Salt { get; set; }
 
         public override string ToString()
         {
-            return string.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}@", ID, UniqueID, TagID, TimeStamp, ReaderNo, AntennaID, IPAddress, Salt);
+            return string.Format("{0}#{1}#{2}#{3}#{4}#{5}#{6}#{7}#{8}@", ID, EPC, Time, PeakRssiInDbm, AntennaNumber, ReaderNumber, IpAddress, UniqueReadingID, Salt);
         }
     }
 }
