@@ -169,7 +169,6 @@
 
         public void OnTagRead(Read readToSend)
         {
-            Debug.WriteLine(readToSend.ToString());
             currentReading = readToSend.ToString();
 
             if (_clients.Count == 0)

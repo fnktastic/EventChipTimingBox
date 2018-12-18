@@ -17,10 +17,15 @@ namespace ECTL
         private static readonly Random getrandom = new Random();
         private Read read;
 
-        public void Start()
+        public void DisposeServer()
         {
-            InitServer.Init();
-            InitServer.StartReading();
+            EmulatedServer.Dispose();
+        }
+
+        public void Start(CancellationTokenSource cancellationToken)
+        {
+            EmulatedServer.Init();
+            EmulatedServer.StartReading();
 
             recoveryFileName = "Spotter";
             saltString = GetRandomInt(10, 10000).ToString();
@@ -34,36 +39,23 @@ namespace ECTL
                 EPC = "TAG_12",
                 UniqueReadingID = Guid.NewGuid().ToString(),
                 PeakRssiInDbm = "-11dBm",
-                Salt = string.Format("{0}_{1}", recoveryFileName, saltString)
+                TimingPoint = string.Format("{0}_{1}", recoveryFileName, saltString)
             };
 
-            while (true)
+           do
             {
                 Thread.Sleep(1000);
                 read.Time = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                 read.ID++;
                 read.UniqueReadingID = Guid.NewGuid().ToString();
                 WriteReadingInFile(read);
-                InitServer.OnTagRead(read);
-            }
-        }
-
-        private bool IsReadingIdSent()
-        {
-            while(true)
-            {
-                read = new Read()
-                {
-                    ID = -1,
-                    EPC = string.Format("{0}_{1}", recoveryFileName, saltString)
-                };
-
-            }
+                EmulatedServer.OnTagRead(read);
+            } while (!cancellationToken.IsCancellationRequested);
         }
 
         private static bool WriteReadingInFile(Read read)
         {
-            using (var fileStream = new FileStream(String.Format("{0}.txt", read.Salt), FileMode.Append))
+            using (var fileStream = new FileStream(String.Format("{0}.txt", read.TimingPoint), FileMode.Append))
             using (var streamWriter = new StreamWriter(fileStream))
             {
                 streamWriter.WriteLine(read.ToString());
@@ -82,7 +74,7 @@ namespace ECTL
         }
     }
 
-    public static class InitServer
+    public static class EmulatedServer
     {
         private static Server _server;
         private const int DEFAULT_PORT = 10000;
@@ -104,12 +96,17 @@ namespace ECTL
         {
             try
             {
-                _server.Listen(DEFAULT_PORT, "localhost");
+                _server.Listen(DEFAULT_PORT);
             }
             catch
             {
                 _server.Dispose();
             }
+        }
+
+        public static void Dispose()
+        {
+            _server.Dispose();
         }
 
         public static void OnTagRead(Read read)

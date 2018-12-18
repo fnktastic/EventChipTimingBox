@@ -145,6 +145,8 @@
         private static readonly Random getrandom = new Random();
         private bool _isTestMoode;
         private ReadingEmulator readingEmulator;
+        private CancellationTokenSource _cancellationToken;
+        private Task readerWorker;
 
         public MainForm()
         {
@@ -323,10 +325,14 @@
                     }
                 }
                 if (_isTestMoode)
-                    Task.Run(() =>
+                {
+                    readerWorker = new Task(() =>
                     {
-                        readingEmulator.Start();
+                        _cancellationToken = new CancellationTokenSource();
+                        readingEmulator.Start(_cancellationToken);
                     });
+                    readerWorker.Start();
+                }
                 else
                     this.StartAllReaders();
 
@@ -353,6 +359,12 @@
 
         private void btnStop_Click(object sender, EventArgs e)
         {
+            if (_isTestMoode)
+            {
+                _cancellationToken.Cancel();                
+                readingEmulator.DisposeServer();
+            }
+
             if (DialogResult.Yes == MessageBox.Show(this, "Do you want to Stop Reading?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
             {
                 this.StopAllReaders();
@@ -2187,8 +2199,7 @@
                             ReaderNumber = str3,
                             IpAddress = _ip,
                             UniqueReadingID = Guid.NewGuid().ToString(),
-                            Salt = string.Format("{0}_{1}", recoveryFileName, saltString)
-
+                            TimingPoint = string.Format("{0}_{1}", recoveryFileName, saltString)
                         };
 
                         WriteReadingInFile(readingToSend);
@@ -2200,7 +2211,7 @@
 
         private bool WriteReadingInFile(Read read)
         {
-            using (var fileStream = new FileStream(String.Format("{0}.txt", read.Salt), FileMode.Append))
+            using (var fileStream = new FileStream(String.Format("{0}.txt", read.TimingPoint), FileMode.Append))
             using (var streamWriter = new StreamWriter(fileStream))
             {
                 streamWriter.WriteLine(read);
