@@ -15,6 +15,7 @@
     using System.Threading;
     using System.Windows.Forms;
     using System.Threading.Tasks;
+    using System.Globalization;
 
     public class MainForm : Form
     {
@@ -2189,7 +2190,7 @@
                     }
                     if (_server != null)
                     {
-                        long unixTime = GetUnixTime(read.Tag.FirstSeenTime);
+                        string unixTime = read.Tag.FirstSeenTime.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                         var readingToSend = new Read()
                         {
                             EPC = read.EPC,
