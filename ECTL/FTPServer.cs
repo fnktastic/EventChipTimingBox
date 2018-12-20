@@ -55,7 +55,7 @@ namespace ECTL
             else
             {
                 OutputTransferStatus(transfer, "Accepting request from " + client);
-                StartTransfer(transfer, new FileStream(file.FullName, FileMode.Open));
+                StartTransfer(transfer, new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
             }
         }
 

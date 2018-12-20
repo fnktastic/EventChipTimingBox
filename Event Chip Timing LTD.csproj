@@ -82,6 +82,7 @@
     <Reference Include="System.Drawing" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ECTL\FTPServer.cs" />
+    <Compile Include="ECTL\MultiServer.cs" />
     <Compile Include="ECTL\Read.cs" />
     <Compile Include="ECTL\ReadingEmulator.cs" />
     <Compile Include="Global.cs" />

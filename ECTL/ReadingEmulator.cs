@@ -24,44 +24,52 @@ namespace ECTL
 
         public void Start(CancellationTokenSource cancellationToken)
         {
-            EmulatedServer.Init();
-            EmulatedServer.StartReading();
-
-            recoveryFileName = "Spotter";
-            saltString = GetRandomInt(10, 10000).ToString();
-
-            read = new Read()
+            try
             {
-                ID = 0,
-                AntennaNumber = "2",
-                IpAddress = "127.0.0.1",
-                ReaderNumber = "1",
-                EPC = "TAG_12",
-                UniqueReadingID = Guid.NewGuid().ToString(),
-                PeakRssiInDbm = "-11dBm",
-                TimingPoint = string.Format("{0}_{1}", recoveryFileName, saltString)
-            };
+                EmulatedServer.Init();
+                EmulatedServer.StartReading();
 
-           do
+                recoveryFileName = "Spotter";
+                saltString = GetRandomInt(10, 10000).ToString();
+
+                read = new Read()
+                {
+                    ID = 0,
+                    AntennaNumber = "2",
+                    IpAddress = "127.0.0.1",
+                    ReaderNumber = "1",
+                    EPC = "TAG_12",
+                    UniqueReadingID = Guid.NewGuid().ToString(),
+                    PeakRssiInDbm = "-11dBm",
+                    TimingPoint = string.Format("{0}_{1}", recoveryFileName, saltString)
+                };
+
+                do
+                {
+                    Thread.Sleep(500);
+                    read.Time = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                    read.ID++;
+                    read.UniqueReadingID = Guid.NewGuid().ToString();
+                    WriteReadingInFile(read);
+                    EmulatedServer.OnTagRead(read);
+                } while (!cancellationToken.IsCancellationRequested);
+            }
+            catch (Exception ex)
             {
-                Thread.Sleep(3000);
-                read.Time = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-                read.ID++;
-                read.UniqueReadingID = Guid.NewGuid().ToString();
-                WriteReadingInFile(read);
-                EmulatedServer.OnTagRead(read);
-            } while (!cancellationToken.IsCancellationRequested);
+                Debug.WriteLine(string.Format("{0}\n{1}", ex.Message, ex.StackTrace));
+            }
         }
 
         private static bool WriteReadingInFile(Read read)
         {
-            using (var fileStream = new FileStream(String.Format("{0}.txt", read.TimingPoint), FileMode.Append))
-            using (var streamWriter = new StreamWriter(fileStream))
             {
-                streamWriter.WriteLine(read.ToString());
+                using (var fileStream = new FileStream(String.Format("{0}.txt", read.TimingPoint), FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+                using (var streamWriter = new StreamWriter(fileStream))
+                {
+                    streamWriter.WriteLine(read.ToString());
+                }
+                return true;
             }
-
-            return true;
         }
 
         private static int GetRandomInt(int min, int max)

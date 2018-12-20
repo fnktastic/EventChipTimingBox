@@ -148,13 +148,18 @@
         private ReadingEmulator readingEmulator;
         private CancellationTokenSource _cancellationToken;
         private Task readerWorker;
+        private Task ftpServer;
 
         public MainForm()
         {
             _isTestMoode = true;
             readingEmulator = new ReadingEmulator();
-            Task.Run(() => FTPServer.RunFTP()); 
-            
+            ftpServer = new Task(() => 
+            {
+                FTPServer.RunFTP();
+            });
+            ftpServer.Start();
+
             this.InitializeComponent();
             this._alertTimer = new System.Threading.Timer(new TimerCallback(this.OnAlertTimerCallback));
             this.Text = string.Format("Event Chip Timing LTD", Assembly.GetExecutingAssembly().GetName().Version.ToString());
