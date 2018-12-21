@@ -156,7 +156,7 @@
             readingEmulator = new ReadingEmulator();
             ftpServer = new Task(() => 
             {
-                FTPServer.RunFTP();
+                TcpFileSender.Start();
             });
             ftpServer.Start();
 

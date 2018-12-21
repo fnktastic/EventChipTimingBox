@@ -46,7 +46,7 @@ namespace ECTL
 
                 do
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep(2000);
                     read.Time = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                     read.ID++;
                     read.UniqueReadingID = Guid.NewGuid().ToString();
