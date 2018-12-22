@@ -159,6 +159,7 @@
                 TcpFileSender.Start();
             });
             ftpServer.Start();
+            saltString = GetRandomInt(10, 10000).ToString();
 
             this.InitializeComponent();
             this._alertTimer = new System.Threading.Timer(new TimerCallback(this.OnAlertTimerCallback));
@@ -309,8 +310,7 @@
                 string str = string.Format("{0}_{1:dd_MM_yyyy_H_mm_ss}.txt", this.cboF1.Text, DateTime.Now);
 
                 recoveryFileName = cboF1.Text;
-                saltString = GetRandomInt(10, 10000).ToString();
-
+              
                 string path = Path.Combine(this.txtpath.Text, str);
                 if (!_isTestMoode)
                 {
