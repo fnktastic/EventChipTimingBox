@@ -170,7 +170,7 @@
         }
 
         [DllImport("kernel32.dll")]
-        private static extern bool SetLocalTime([In] ref SYSTEMTIME lpLocalTime);
+        public static extern bool SetLocalTime([In] ref SYSTEMTIME lpLocalTime);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct SYSTEMTIME

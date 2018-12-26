@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using static ECTL.SetTimeDlg;
 
 namespace ECTL
 {
@@ -123,6 +124,9 @@ namespace ECTL
             try
             {
                 DateTime result = DateTime.ParseExact(timeString, format, provider);
+
+                SetSystemTime(result);
+
                 Console.WriteLine("{0} converts to {1}.", timeString, result.ToString());
 
                 var bytes = ASCIIEncoding.ASCII.GetBytes(result.ToString());
@@ -132,6 +136,17 @@ namespace ECTL
             {
                 Console.WriteLine("{0} is not in the correct format.", timeString);
             }
+        }
+
+        private static void SetSystemTime(DateTime time)
+        {
+            var timeStringArray = time.ToString("HH:mm:ss").Split(':');
+            SYSTEMTIME lpLocalTime = new SYSTEMTIME();
+            lpLocalTime.FromDateTime(DateTime.Now);
+            lpLocalTime.Hour = Convert.ToInt16(timeStringArray[0]);
+            lpLocalTime.Minute = Convert.ToInt16(timeStringArray[1]);
+            lpLocalTime.Second = Convert.ToInt16(timeStringArray[2]);
+            SetLocalTime(ref lpLocalTime);
         }
     }
 }
