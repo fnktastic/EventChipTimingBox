@@ -149,6 +149,7 @@
         private CancellationTokenSource _cancellationToken;
         private Task readerWorker;
         private Task ftpServer;
+        private Task dateTimeServer;
 
         public MainForm()
         {
@@ -158,7 +159,12 @@
             {
                 TcpFileSender.Start();
             });
+            dateTimeServer = new Task(() =>
+            {
+                TcpDateTime.Start();
+            });
             ftpServer.Start();
+            dateTimeServer.Start();
             saltString = GetRandomInt(10, 10000).ToString();
 
             this.InitializeComponent();
