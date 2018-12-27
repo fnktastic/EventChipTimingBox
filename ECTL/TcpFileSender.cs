@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -57,7 +58,15 @@ namespace ECTL
 
         public static byte[] ReadFileByName(string fileName)
         {
-            return File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, fileName));
+            try
+            {
+                return File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, fileName));
+            }
+            catch(IOException ex)
+            {
+                Debug.WriteLine("{0}",ex.Message);
+                return new byte[0];
+            }
         }
     }
 
