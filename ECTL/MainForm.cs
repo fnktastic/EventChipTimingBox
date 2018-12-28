@@ -16,6 +16,7 @@
     using System.Windows.Forms;
     using System.Threading.Tasks;
     using System.Globalization;
+    using System.Text;
 
     public class MainForm : Form
     {
@@ -62,7 +63,6 @@
         private DataGridView dataGridViewBackup;
         private DateTime date = DateTime.Now;
         private FolderBrowserDialog fbd = new FolderBrowserDialog();
-        private string fileName;
         private GroupBox groupBox13;
         private GroupBox groupBox2;
         private GroupBox groupBox3;
@@ -141,15 +141,14 @@
         private TextBox total4;
         private TextBox total3;
         myGreenButtonObject connectReaderButton;
-        private string recoveryFileName;
-        private string saltString;
-        private static readonly Random getrandom = new Random();
+        private string timingSpotter;
         private bool _isTestMoode;
         private ReadingEmulator readingEmulator;
         private CancellationTokenSource _cancellationToken;
         private Task readerWorker;
         private Task ftpServer;
         private Task dateTimeServer;
+        private string recoveryFileName;
 
         public MainForm()
         {
@@ -165,7 +164,7 @@
             });
             ftpServer.Start();
             dateTimeServer.Start();
-            saltString = GetRandomInt(10, 10000).ToString();
+            recoveryFileName = string.Format("{0}$_{1}.txt", timingSpotter, DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss"));
 
             this.InitializeComponent();
             this._alertTimer = new System.Threading.Timer(new TimerCallback(this.OnAlertTimerCallback));
@@ -294,15 +293,6 @@
             this.Savebackup();
         }
 
-        private int GetRandomInt(int min, int max)
-        {
-            lock (getrandom)
-            {
-                return getrandom.Next(min, max);
-            }
-
-        }
-
         private void btnStart_Click(object sender, EventArgs e)
         {
             try
@@ -315,7 +305,7 @@
                 }
                 string str = string.Format("{0}_{1:dd_MM_yyyy_H_mm_ss}.txt", this.cboF1.Text, DateTime.Now);
 
-                recoveryFileName = cboF1.Text;
+                timingSpotter = cboF1.Text;
               
                 string path = Path.Combine(this.txtpath.Text, str);
                 if (!_isTestMoode)
@@ -324,6 +314,7 @@
                     try
                     {
                         this._server = new Server();
+                        this._server.RecoveryFile = recoveryFileName;
                         this._server.Listen(ECTL.Properties.Settings.Default.TcpIpPort);
                     }
                     catch
@@ -371,36 +362,41 @@
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            if (_isTestMoode)
-            {
-                _cancellationToken.Cancel();                
-                readingEmulator.DisposeServer();
-            }
-
             if (DialogResult.Yes == MessageBox.Show(this, "Do you want to Stop Reading?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
             {
-                this.StopAllReaders();
-                lock (this)
+                if (_isTestMoode)
                 {
-                    if (this._server != null)
-                    {
-                        this._server.Dispose();
-                        this._server = null;
-                    }
+                    readingEmulator.StopServer();
+                    _cancellationToken.Cancel();
+                    readingEmulator.DisposeServer();
                 }
-                lock (this)
+
+                if (!_isTestMoode)
                 {
-                    if (this._writer != null)
+                    this._server.SendAll(Encoding.ASCII.GetBytes("!STOP!"));
+                    this.StopAllReaders();
+                    lock (this)
                     {
-                        this._writer.Close();
-                        this._writer.Dispose();
-                        this._writer = null;
+                        if (this._server != null)
+                        {
+                            this._server.Dispose();
+                            this._server = null;
+                        }
                     }
-                    if (this._stream != null)
+                    lock (this)
                     {
-                        this._stream.Close();
-                        this._stream.Dispose();
-                        this._stream = null;
+                        if (this._writer != null)
+                        {
+                            this._writer.Close();
+                            this._writer.Dispose();
+                            this._writer = null;
+                        }
+                        if (this._stream != null)
+                        {
+                            this._stream.Close();
+                            this._stream.Dispose();
+                            this._stream = null;
+                        }
                     }
                 }
                 this.btnStart.Text = "Start Readings Tags";
@@ -2211,7 +2207,7 @@
                             ReaderNumber = str3,
                             IpAddress = _ip,
                             UniqueReadingID = Guid.NewGuid().ToString(),
-                            TimingPoint = string.Format("{0}_{1}", recoveryFileName, saltString)
+                            TimingPoint = timingSpotter
                         };
 
                         WriteReadingInFile(readingToSend);
@@ -2223,7 +2219,7 @@
 
         private bool WriteReadingInFile(Read read)
         {
-            using (var fileStream = new FileStream(String.Format("{0}.txt", read.TimingPoint), FileMode.Append))
+            using (var fileStream = new FileStream(recoveryFileName, FileMode.Append))
             using (var streamWriter = new StreamWriter(fileStream))
             {
                 streamWriter.WriteLine(read);

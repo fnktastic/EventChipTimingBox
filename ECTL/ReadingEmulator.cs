@@ -12,9 +12,7 @@ namespace ECTL
 {
     public class ReadingEmulator
     {
-        private static string recoveryFileName;
-        private static string saltString;
-        private static readonly Random getrandom = new Random();
+        private static string recoveryFileName = string.Format("{0}$_{1}.txt", "Spotter", DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss"));
         private Read read;
 
         public void DisposeServer()
@@ -22,15 +20,17 @@ namespace ECTL
             EmulatedServer.Dispose();
         }
 
+        public void StopServer()
+        {
+            EmulatedServer.Stop();
+        }
+
         public void Start(CancellationTokenSource cancellationToken)
         {
             try
             {
-                EmulatedServer.Init();
+                EmulatedServer.Init(recoveryFileName);
                 EmulatedServer.StartReading();
-
-                recoveryFileName = "Spotter";
-                saltString = GetRandomInt(10, 10000).ToString();
 
                 read = new Read()
                 {
@@ -41,12 +41,12 @@ namespace ECTL
                     EPC = "TAG_12",
                     UniqueReadingID = Guid.NewGuid().ToString(),
                     PeakRssiInDbm = "-11dBm",
-                    TimingPoint = string.Format("{0}_{1}", recoveryFileName, saltString)
+                    TimingPoint = "Spotter"
                 };
 
                 do
                 {
-                    Thread.Sleep(200);
+                    Thread.Sleep(1500);
                     read.Time = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
                     read.ID++;
                     read.UniqueReadingID = Guid.NewGuid().ToString();
@@ -63,22 +63,13 @@ namespace ECTL
         private static bool WriteReadingInFile(Read read)
         {
             {
-                using (var fileStream = new FileStream(String.Format("{0}.txt", read.TimingPoint), FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+                using (var fileStream = new FileStream(recoveryFileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
                 using (var streamWriter = new StreamWriter(fileStream))
                 {
                     streamWriter.WriteLine(read.ToString());
                 }
                 return true;
             }
-        }
-
-        private static int GetRandomInt(int min, int max)
-        {
-            lock (getrandom)
-            {
-                return getrandom.Next(min, max);
-            }
-
         }
     }
 
@@ -87,17 +78,23 @@ namespace ECTL
         private static Server _server;
         private const int DEFAULT_PORT = 10000;
 
-        public static void Init()
+        public static void Init(string recoveryFile)
         {
             try
             {
                 _server = new Server();
+                _server.RecoveryFile = recoveryFile;
             }
             catch
             {
                 _server.Dispose();
             }
 
+        }
+
+        public static void Stop()
+        {
+            _server.SendAll(Encoding.ASCII.GetBytes("!STOP!"));
         }
 
         public static void StartReading()

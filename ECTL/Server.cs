@@ -14,6 +14,7 @@
         private string currentReading = string.Empty;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly AsyncCallback _onAsyncReadComplete;
+        public string RecoveryFile { private get; set; }
 
         public Server()
         {
@@ -123,6 +124,10 @@
                 try
                 {
                     ReadContext state = new ReadContext(item);
+
+                    var recoveryFile = Encoding.ASCII.GetBytes(RecoveryFile);
+                    item.GetStream().Write(recoveryFile, 0, recoveryFile.Length);
+
                     item.GetStream().BeginRead(state.Buffer, 0, state.Buffer.Length, this._onAsyncReadComplete, state);
                 }
                 catch
@@ -173,7 +178,7 @@
             }
         }
 
-        private void SendAll(byte[] data)
+        public void SendAll(byte[] data)
         {
             foreach (TcpClient client in Utils.ToArray<TcpClient>((ICollection<TcpClient>)this._clients))
             {
