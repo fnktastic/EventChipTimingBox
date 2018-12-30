@@ -34,8 +34,9 @@
                 {
                     client.Close();
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(this.Dispose), ex.Message, ex.StackTrace));
                 }
             }
             lock (this)
@@ -46,8 +47,9 @@
                     {
                         this._listener.Stop();
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(this.Dispose), ex.Message, ex.StackTrace));
                     }
                     this._listener = null;
                 }
@@ -63,7 +65,7 @@
                 {
                     client.GetStream().Flush();
                 }
-                catch
+                catch (Exception ex)
                 {
                     lock (this._clients)
                     {
@@ -72,6 +74,7 @@
                             this._clients.Remove(client);
                         }
                     }
+                    Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(this.FlushAll), ex.Message, ex.StackTrace));
                 }
             }
         }
@@ -97,8 +100,9 @@
                 {
                     any = IPAddress.Parse(strHost);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(this.Listen), ex.Message, ex.StackTrace));
                 }
             }
             try
@@ -108,8 +112,9 @@
                 this._listener.BeginAcceptTcpClient(new AsyncCallback(this.OnAsyncClientAccepted), this._listener);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(this.Listen), ex.Message, ex.StackTrace));
             }
             return false;
         }
@@ -130,7 +135,7 @@
 
                     item.GetStream().BeginRead(state.Buffer, 0, state.Buffer.Length, this._onAsyncReadComplete, state);
                 }
-                catch
+                catch (Exception ex)
                 {
                     lock (this._clients)
                     {
@@ -139,6 +144,8 @@
                             this._clients.Remove(item);
                         }
                     }
+
+                    Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(this.OnAsyncClientAccepted), ex.Message, ex.StackTrace));
                 }
             }
             catch
@@ -156,7 +163,7 @@
                 stream.EndRead(asyncResult);
                 stream.BeginRead(asyncState.Buffer, 0, asyncState.Buffer.Length, this._onAsyncReadComplete, asyncState);
             }
-            catch
+            catch (Exception ex)
             {
                 lock (this._clients)
                 {
@@ -165,16 +172,24 @@
                         this._clients.Remove(asyncState.Client);
                     }
                 }
+
+                Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(this.OnAsyncReadComplete), ex.Message, ex.StackTrace));
             }
         }
 
         public void OnTagRead(Read readToSend)
         {
-            if (this._clients.Count >= 1)
+            try
             {
-                currentReading = readToSend.ToString();
-                SendAll(Encoding.ASCII.GetBytes(currentReading));
-                Console.WriteLine(currentReading);
+                if (this._clients.Count >= 1)
+                {
+                    currentReading = readToSend.ToString();
+                    SendAll(Encoding.ASCII.GetBytes(currentReading));
+                }
+            } 
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(this.OnTagRead), ex.Message, ex.StackTrace));
             }
         }
 
@@ -186,7 +201,7 @@
                 {
                     client.GetStream().Write(data, 0, data.Length);
                 }
-                catch
+                catch (Exception ex)
                 {
                     lock (this._clients)
                     {
@@ -195,6 +210,8 @@
                             this._clients.Remove(client);
                         }
                     }
+
+                    Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(this.SendAll), ex.Message, ex.StackTrace));
                 }
             }
         }

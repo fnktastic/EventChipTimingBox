@@ -56,12 +56,13 @@ namespace ECTL
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(string.Format("{0}\n{1}", ex.Message, ex.StackTrace));
+                Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(this.Start), ex.Message, ex.StackTrace));
             }
         }
 
         private static bool WriteReadingInFile(Read read)
         {
+            try
             {
                 using (var fileStream = new FileStream(recoveryFileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
                 using (var streamWriter = new StreamWriter(fileStream))
@@ -69,6 +70,11 @@ namespace ECTL
                     streamWriter.WriteLine(read.ToString());
                 }
                 return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(WriteReadingInFile), ex.Message, ex.StackTrace));
+                return false;
             }
         }
     }

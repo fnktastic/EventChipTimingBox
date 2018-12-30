@@ -17,13 +17,15 @@ namespace ECTL
 
         public static void Start()
         {
-            IPAddress localAdd = IPAddress.Any;
-            TcpListener listener = new TcpListener(localAdd, PORT);
-            TcpClient tcpClient = new TcpClient();
-            Console.WriteLine("Listening...");
-            listener.Start();
+            TcpClient tcpClient = null;
+            TcpListener listener = null;
             try
             {
+                IPAddress localAdd = IPAddress.Any;
+                listener = new TcpListener(localAdd, PORT);
+                tcpClient = new TcpClient();
+                Console.WriteLine("Listening...");
+                listener.Start();
                 while (true)
                 {
                     tcpClient = listener.AcceptTcpClient();
@@ -47,7 +49,7 @@ namespace ECTL
             }
             catch (Exception ex)
             {
-                Console.WriteLine("{0}\n{1}", ex.Message, ex.StackTrace);
+                Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(Start), ex.Message, ex.StackTrace));
             }
             finally
             {
@@ -62,9 +64,9 @@ namespace ECTL
             {
                 return File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, fileName));
             }
-            catch(IOException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("{0}",ex.Message);
+                Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(ReadFileByName), ex.Message, ex.StackTrace));
                 return new byte[0];
             }
         }
@@ -73,36 +75,34 @@ namespace ECTL
     public class TcpDateTime
     {
         const int PORT = 5001;
-
         public static void Start()
         {
-            IPAddress localAdd = IPAddress.Any;
-            TcpListener listener = new TcpListener(localAdd, PORT);
-            TcpClient tcpClient = new TcpClient();
-            Console.WriteLine("DateTime Listening...");
-            listener.Start();
+            TcpListener listener = null;
+            TcpClient tcpClient = null;
             try
             {
+                IPAddress localAdd = IPAddress.Any;
+                listener = new TcpListener(localAdd, PORT);
+                tcpClient = new TcpClient();
+                Console.WriteLine("DateTime Listening...");
+                listener.Start();
+
                 while (true)
                 {
                     tcpClient = listener.AcceptTcpClient();
-
                     NetworkStream nwStream = tcpClient.GetStream();
                     byte[] buffer = new byte[tcpClient.ReceiveBufferSize];
-
                     int bytesRead = nwStream.Read(buffer, 0, tcpClient.ReceiveBufferSize);
-
                     string action = Encoding.ASCII.GetString(buffer, 0, bytesRead); // action 1 - SendTime, action 2 - GetAndSetTime
-                    Console.WriteLine("Received action: " + action);
                     if (action.StartsWith("t1@"))
                         SendTime(nwStream);
                     if (action.StartsWith("t2@"))
-                        GetAndSetTime(nwStream, action.Remove(0,3));
+                        GetAndSetTime(nwStream, action.Remove(0, 3));
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("{0}\n{1}", ex.Message, ex.StackTrace);
+                Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(Start), ex.Message, ex.StackTrace));
             }
             finally
             {
@@ -117,11 +117,11 @@ namespace ECTL
             {
                 string timeNow = DateTime.Now.ToString("HH:mm:ss");
                 var bytes = ASCIIEncoding.ASCII.GetBytes(timeNow);
-                nwStream.Write(bytes, 0, bytes.Length);                
+                nwStream.Write(bytes, 0, bytes.Length);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("{0}\n{1}", ex.Message, ex.StackTrace);
+                Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(SendTime), ex.Message, ex.StackTrace));
             }
         }
 
@@ -133,17 +133,13 @@ namespace ECTL
             try
             {
                 DateTime result = DateTime.ParseExact(timeString, format, provider);
-
                 SetSystemTime(result);
-
-                Console.WriteLine("{0} converts to {1}.", timeString, result.ToString());
-
                 var bytes = ASCIIEncoding.ASCII.GetBytes(result.ToString());
                 nwStream.Write(bytes, 0, bytes.Length);
             }
             catch (FormatException)
             {
-                Console.WriteLine("{0} is not in the correct format.", timeString);
+                Console.WriteLine("{0}: {1} is not in the correct format.",nameof(GetAndSetTime), timeString);
             }
         }
 
