@@ -67,7 +67,7 @@ namespace ECTL
             catch (Exception ex)
             {
                 Debug.WriteLine(string.Format("{0}:  {1}\n{2}", nameof(ReadFileByName), ex.Message, ex.StackTrace));
-                return new byte[0];
+                return Encoding.ASCII.GetBytes("EXCEPTION");
             }
         }
     }
