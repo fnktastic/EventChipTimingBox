@@ -17,6 +17,7 @@
     using System.Threading.Tasks;
     using System.Globalization;
     using System.Text;
+    using Services.Server;
 
     public class MainForm : Form
     {
@@ -600,7 +601,7 @@
                     }
                     if (tagReads.Count > 0)
                     {
-                        this.ProcessTagReads(tagReads);
+                        this.ProcessTagReadsAsync(tagReads);
                         tagReads.Clear();
                     }
                 }
@@ -2102,7 +2103,7 @@
             ECTL.Properties.Settings.Default.Save();
         }
 
-        private void ProcessTagReads(ICollection<TagRead> tagReads)
+        private async Task ProcessTagReadsAsync(ICollection<TagRead> tagReads)
         {
             string str = null;
             string str2 = null;
@@ -2212,6 +2213,8 @@
 
                         WriteReadingInFile(readingToSend);
                         _server.OnTagRead(readingToSend);
+                        ServerService.InitProtocol(ProtocolEnum.Http);
+                        ServerService.SendReadAsync().GetAwaiter().GetResult();
                     }
                 }
             }

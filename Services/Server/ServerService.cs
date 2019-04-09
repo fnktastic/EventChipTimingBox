@@ -8,38 +8,58 @@ using System.Threading.Tasks;
 
 namespace Services.Server
 {
-    public class ServerService
+    public static class ServerService
     {
-        private dynamic binding;
-        private dynamic endpoint;
+        private static dynamic binding = null;
+        private static dynamic endpoint = null;
 
-        public async Task SendAsync()
+        public static async Task SendReadAsync()
         {
+            IService service = null;
             using (var channelFactory = new ChannelFactory<IService>(binding, endpoint))
             {
                 channelFactory.Credentials.UserName.UserName = string.Empty;
                 channelFactory.Credentials.UserName.Password = string.Empty;
 
-                IService service = null;
+                service = channelFactory.CreateChannel();
+                try
+                {
+                    service = channelFactory.CreateChannel();
+                    var read = await service.SetReadAsync(new Read() { Id = Guid.NewGuid(), ReadingId = Guid.NewGuid(), EPC = "TAG 14", Time = DateTime.UtcNow });
+                }
+
+                catch (Exception ex)
+                {
+                    (service as ICommunicationObject)?.Abort();
+                    Logger.Log.Error(string.Format("{0}: {1}", nameof(SendReadAsync), ex.Message));
+                }
+            }
+        }
+
+        public static async Task SendReadingAsync()
+        {
+            IService service = null;
+            using (var channelFactory = new ChannelFactory<IService>(binding, endpoint))
+            {
+                channelFactory.Credentials.UserName.UserName = string.Empty;
+                channelFactory.Credentials.UserName.Password = string.Empty;
+
+                service = channelFactory.CreateChannel();
                 try
                 {
                     service = channelFactory.CreateChannel();
                     var reader = await service.SetReaderAsync(new Reader());
                     var reading = await service.SetReadingAsync(new Reading() { Id = Guid.NewGuid(), ReaderId = reader.Id, IPAddress = "192.168.15.125", StartedDateTime = DateTime.UtcNow });
-
-                        var read = await service.SetReadAsync(new Read() { Id = Guid.NewGuid(), ReadingId = reading.Id, EPC = "TAG 14", Time = DateTime.UtcNow });
-
-                        await Task.Delay(Consts.DELAY);
                 }
                 catch (Exception ex)
                 {
                     (service as ICommunicationObject)?.Abort();
-                    Logger.Log.Error(string.Format("{0}: {1}", nameof(SendAsync), ex.Message));
+                    Logger.Log.Error(string.Format("{0}: {1}", nameof(SendReadAsync), ex.Message));
                 }
             }
         }
 
-        private void InitProtocol(ProtocolEnum protocol)
+        public static void InitProtocol(ProtocolEnum protocol)
         {
             try
             {
