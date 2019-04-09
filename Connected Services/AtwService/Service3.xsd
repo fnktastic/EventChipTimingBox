@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/ATWService.Model" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ATWService.Model" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://77.68.12.158/Service.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="Read">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="EPC" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="ser:guid" />
+      <xs:element minOccurs="0" name="Reading" nillable="true" type="tns:Reading" />
+      <xs:element minOccurs="0" name="ReadingId" type="ser:guid" />
+      <xs:element minOccurs="0" name="Signal" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Time" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Read" nillable="true" type="tns:Read" />
+  <xs:complexType name="Reading">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AntennaNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EndedDateTime" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="FileName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IPAddress" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="ser:guid" />
+      <xs:element minOccurs="0" name="Reader" nillable="true" type="tns:Reader" />
+      <xs:element minOccurs="0" name="ReaderId" type="xs:int" />
+      <xs:element minOccurs="0" name="ReaderNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Reads" nillable="true" type="tns:ArrayOfRead" />
+      <xs:element minOccurs="0" name="StartedDateTime" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="TimingPoint" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TotalReads" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Reading" nillable="true" type="tns:Reading" />
+  <xs:complexType name="Reader">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Host" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="Port" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Readings" nillable="true" type="tns:ArrayOfReading" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Reader" nillable="true" type="tns:Reader" />
+  <xs:complexType name="ArrayOfReading">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Reading" nillable="true" type="tns:Reading" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfReading" nillable="true" type="tns:ArrayOfReading" />
+  <xs:complexType name="ArrayOfRead">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Read" nillable="true" type="tns:Read" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfRead" nillable="true" type="tns:ArrayOfRead" />
+  <xs:complexType name="ArrayOfRace">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Race" nillable="true" type="tns:Race" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfRace" nillable="true" type="tns:ArrayOfRace" />
+  <xs:complexType name="Race">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Reader" nillable="true" type="tns:Reader" />
+      <xs:element minOccurs="0" name="Reading" nillable="true" type="tns:Reading" />
+      <xs:element minOccurs="0" name="Reads" nillable="true" type="tns:ArrayOfRead" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Race" nillable="true" type="tns:Race" />
+  <xs:complexType name="ArrayOfReader">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Reader" nillable="true" type="tns:Reader" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfReader" nillable="true" type="tns:ArrayOfReader" />
+  <xs:complexType name="ArrayOfLastSeenLog">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LastSeenLog" nillable="true" type="tns:LastSeenLog" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLastSeenLog" nillable="true" type="tns:ArrayOfLastSeenLog" />
+  <xs:complexType name="LastSeenLog">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="LastSeenAt" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="ReadingId" type="ser:guid" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LastSeenLog" nillable="true" type="tns:LastSeenLog" />
+</xs:schema>

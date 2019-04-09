@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="Service" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="UsernameEndpoint_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://77.68.12.158/Service.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://77.68.12.158/Service.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://77.68.12.158/Service.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ATWService.Model" />
+      <xsd:import schemaLocation="http://77.68.12.158/Service.svc?xsd=xsd3" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IService_SetRead_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetRead" />
+  </wsdl:message>
+  <wsdl:message name="IService_SetRead_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetReadResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_SetReading_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetReading" />
+  </wsdl:message>
+  <wsdl:message name="IService_SetReading_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetReadingResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_SetReader_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetReader" />
+  </wsdl:message>
+  <wsdl:message name="IService_SetReader_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetReaderResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetReadingById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetReadingById" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetReadingById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetReadingByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllReadings_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllReadings" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllReadings_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllReadingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllRaces_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllRaces" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllRaces_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllRacesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetRaceByReadingId_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRaceByReadingId" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetRaceByReadingId_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRaceByReadingIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetReadById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetReadById" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetReadById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetReadByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllReads_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllReads" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllReads_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllReadsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetReaderById_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetReaderById" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetReaderById_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetReaderByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllReaders_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllReaders" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllReaders_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllReadersResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllReadsByReadingId_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllReadsByReadingId" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllReadsByReadingId_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllReadsByReadingIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetLastSeenLogs_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLastSeenLogs" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetLastSeenLogs_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLastSeenLogsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetLastSeenLogByReadingId_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLastSeenLogByReadingId" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetLastSeenLogByReadingId_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLastSeenLogByReadingIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllAliveLastSyncLogs_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllAliveLastSyncLogs" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllAliveLastSyncLogs_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllAliveLastSyncLogsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllPastLastSyncLogs_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllPastLastSyncLogs" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetAllPastLastSyncLogs_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllPastLastSyncLogsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetReadingsByIds_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetReadingsByIds" />
+  </wsdl:message>
+  <wsdl:message name="IService_GetReadingsByIds_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetReadingsByIdsResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IService">
+    <wsdl:operation name="SetRead">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/SetRead" message="tns:IService_SetRead_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/SetReadResponse" message="tns:IService_SetRead_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetReading">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/SetReading" message="tns:IService_SetReading_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/SetReadingResponse" message="tns:IService_SetReading_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetReader">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/SetReader" message="tns:IService_SetReader_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/SetReaderResponse" message="tns:IService_SetReader_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReadingById">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetReadingById" message="tns:IService_GetReadingById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetReadingByIdResponse" message="tns:IService_GetReadingById_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllReadings">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetAllReadings" message="tns:IService_GetAllReadings_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetAllReadingsResponse" message="tns:IService_GetAllReadings_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRaces">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetAllRaces" message="tns:IService_GetAllRaces_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetAllRacesResponse" message="tns:IService_GetAllRaces_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRaceByReadingId">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetRaceByReadingId" message="tns:IService_GetRaceByReadingId_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetRaceByReadingIdResponse" message="tns:IService_GetRaceByReadingId_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReadById">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetReadById" message="tns:IService_GetReadById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetReadByIdResponse" message="tns:IService_GetReadById_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllReads">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetAllReads" message="tns:IService_GetAllReads_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetAllReadsResponse" message="tns:IService_GetAllReads_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReaderById">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetReaderById" message="tns:IService_GetReaderById_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetReaderByIdResponse" message="tns:IService_GetReaderById_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllReaders">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetAllReaders" message="tns:IService_GetAllReaders_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetAllReadersResponse" message="tns:IService_GetAllReaders_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllReadsByReadingId">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetAllReadsByReadingId" message="tns:IService_GetAllReadsByReadingId_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetAllReadsByReadingIdResponse" message="tns:IService_GetAllReadsByReadingId_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLastSeenLogs">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetLastSeenLogs" message="tns:IService_GetLastSeenLogs_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetLastSeenLogsResponse" message="tns:IService_GetLastSeenLogs_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLastSeenLogByReadingId">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetLastSeenLogByReadingId" message="tns:IService_GetLastSeenLogByReadingId_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetLastSeenLogByReadingIdResponse" message="tns:IService_GetLastSeenLogByReadingId_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllAliveLastSyncLogs">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetAllAliveLastSyncLogs" message="tns:IService_GetAllAliveLastSyncLogs_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetAllAliveLastSyncLogsResponse" message="tns:IService_GetAllAliveLastSyncLogs_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllPastLastSyncLogs">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetAllPastLastSyncLogs" message="tns:IService_GetAllPastLastSyncLogs_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetAllPastLastSyncLogsResponse" message="tns:IService_GetAllPastLastSyncLogs_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReadingsByIds">
+      <wsdl:input wsaw:Action="http://tempuri.org/IService/GetReadingsByIds" message="tns:IService_GetReadingsByIds_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IService/GetReadingsByIdsResponse" message="tns:IService_GetReadingsByIds_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="UsernameEndpoint" type="tns:IService">
+    <wsp:PolicyReference URI="#UsernameEndpoint_policy" />
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SetRead">
+      <soap12:operation soapAction="http://tempuri.org/IService/SetRead" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetReading">
+      <soap12:operation soapAction="http://tempuri.org/IService/SetReading" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetReader">
+      <soap12:operation soapAction="http://tempuri.org/IService/SetReader" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReadingById">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetReadingById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllReadings">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetAllReadings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllRaces">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetAllRaces" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRaceByReadingId">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetRaceByReadingId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReadById">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetReadById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllReads">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetAllReads" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReaderById">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetReaderById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllReaders">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetAllReaders" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllReadsByReadingId">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetAllReadsByReadingId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLastSeenLogs">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetLastSeenLogs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLastSeenLogByReadingId">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetLastSeenLogByReadingId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllAliveLastSyncLogs">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetAllAliveLastSyncLogs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllPastLastSyncLogs">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetAllPastLastSyncLogs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReadingsByIds">
+      <soap12:operation soapAction="http://tempuri.org/IService/GetReadingsByIds" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Service">
+    <wsdl:port name="UsernameEndpoint" binding="tns:UsernameEndpoint">
+      <soap12:address location="http://77.68.12.158/Service.svc" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>http://77.68.12.158/Service.svc</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
