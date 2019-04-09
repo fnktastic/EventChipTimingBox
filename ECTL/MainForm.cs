@@ -153,7 +153,7 @@
 
         public MainForm()
         {
-            _isTestMoode = true;
+            _isTestMoode = false;
             readingEmulator = new ReadingEmulator();
             ftpServer = new Task(() => 
             {
@@ -338,7 +338,7 @@
                     readerWorker.Start();
                 }
                 else
-                    this.StartAllReaders();
+                    this.StartAllReadersAsync();
 
 
                 this.textBoxLastTagRead.Text = (string) (this.textBoxLastTimeRead.Text = null);
@@ -601,7 +601,7 @@
                     }
                     if (tagReads.Count > 0)
                     {
-                        this.ProcessTagReadsAsync(tagReads);
+                        this.ProcessTagReads(tagReads);
                         tagReads.Clear();
                     }
                 }
@@ -2103,14 +2103,14 @@
             ECTL.Properties.Settings.Default.Save();
         }
 
-        private async Task ProcessTagReadsAsync(ICollection<TagRead> tagReads)
+        private void ProcessTagReads(ICollection<TagRead> tagReads)
         {
             string str = null;
             string str2 = null;
             string str3 = null;
             foreach (TagRead read in tagReads)
             {
-                if(read.Reader == this._reader1)
+                if (read.Reader == this._reader1)
                     if (read.Reader == this._reader1)
                     {
                         switch (read.Tag.AntennaPortNumber)
@@ -2213,8 +2213,7 @@
 
                         WriteReadingInFile(readingToSend);
                         _server.OnTagRead(readingToSend);
-                        ServerService.InitProtocol(ProtocolEnum.Http);
-                        ServerService.SendReadAsync().GetAwaiter().GetResult();
+                        ServerService.SendReadAsync(readingId, read.Tag.FirstSeenTime, read.EPC, read.Tag.PeakRssiInDbm.ToString());
                     }
                 }
             }
@@ -2331,7 +2330,10 @@
             this.txtCheapId.Text = "";
         }
 
-        public void StartAllReaders()
+
+        private Guid readingId;
+        private int readerId;
+        public async Task StartAllReadersAsync()
         {
             lock (this._tagReads)
             {
@@ -2345,6 +2347,13 @@
                 {
                     try
                     {
+                        ServerService.InitProtocol(ProtocolEnum.Http);
+                        string host = reader.ReaderIdentity.ToString();
+                        string port = _tcpipPort.Value.ToString();
+                        readerId = (await ServerService.SendReaderAsync(host, port)).Id;
+                        var reading = await ServerService.SendReadingAsync(readerId, host);
+                        readingId = reading.Id;
+
                         reader.Start();
                     }
                     catch (OctaneSdkException exception)

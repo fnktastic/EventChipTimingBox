@@ -13,7 +13,7 @@ namespace Services.Server
         private static dynamic binding = null;
         private static dynamic endpoint = null;
 
-        public static async Task SendReadAsync()
+        public static async Task SendReadAsync(Guid readingId, DateTime capturedTime, string epc, string signal)
         {
             IService service = null;
             using (var channelFactory = new ChannelFactory<IService>(binding, endpoint))
@@ -25,7 +25,7 @@ namespace Services.Server
                 try
                 {
                     service = channelFactory.CreateChannel();
-                    var read = await service.SetReadAsync(new Read() { Id = Guid.NewGuid(), ReadingId = Guid.NewGuid(), EPC = "TAG 14", Time = DateTime.UtcNow });
+                    var read = await service.SetReadAsync(new Read() { Id = Guid.NewGuid(), ReadingId = readingId, EPC = epc, Time = capturedTime, Signal = signal });
                 }
 
                 catch (Exception ex)
@@ -36,7 +36,7 @@ namespace Services.Server
             }
         }
 
-        public static async Task SendReadingAsync()
+        public static async Task<Reading> SendReadingAsync(int readerId, string ipAdress)
         {
             IService service = null;
             using (var channelFactory = new ChannelFactory<IService>(binding, endpoint))
@@ -48,13 +48,44 @@ namespace Services.Server
                 try
                 {
                     service = channelFactory.CreateChannel();
-                    var reader = await service.SetReaderAsync(new Reader());
-                    var reading = await service.SetReadingAsync(new Reading() { Id = Guid.NewGuid(), ReaderId = reader.Id, IPAddress = "192.168.15.125", StartedDateTime = DateTime.UtcNow });
+
+                    var reading = await service.SetReadingAsync(new Reading() { Id = Guid.NewGuid(), ReaderId = readerId, IPAddress = ipAdress, StartedDateTime = DateTime.UtcNow });
+
+                    return reading;
                 }
                 catch (Exception ex)
                 {
                     (service as ICommunicationObject)?.Abort();
                     Logger.Log.Error(string.Format("{0}: {1}", nameof(SendReadAsync), ex.Message));
+
+                    return null;
+                }
+            }
+        }
+
+        public static async Task<Reader> SendReaderAsync(string host, string port)
+        {
+            IService service = null;
+            using (var channelFactory = new ChannelFactory<IService>(binding, endpoint))
+            {
+                channelFactory.Credentials.UserName.UserName = string.Empty;
+                channelFactory.Credentials.UserName.Password = string.Empty;
+
+                service = channelFactory.CreateChannel();
+                try
+                {
+                    service = channelFactory.CreateChannel();
+
+                    var reader = await service.SetReaderAsync(new Reader() { Host = host, Port = port  });
+
+                    return reader;
+                }
+                catch (Exception ex)
+                {
+                    (service as ICommunicationObject)?.Abort();
+                    Logger.Log.Error(string.Format("{0}: {1}", nameof(SendReadAsync), ex.Message));
+
+                    return null;
                 }
             }
         }
