@@ -13,7 +13,7 @@ namespace Services.Server
         private static dynamic binding = null;
         private static dynamic endpoint = null;
 
-        public static async Task SendReadAsync(Guid readingId, DateTime capturedTime, string epc, string signal, string antennaNumber, int seenCount, int rank)
+        public static async void SendReadAsync(Guid readingId, DateTime capturedTime, string epc, string signal, string antennaNumber, int seenCount, int rank)
         {
             IService service = null;
             using (var channelFactory = new ChannelFactory<IService>(binding, endpoint))
