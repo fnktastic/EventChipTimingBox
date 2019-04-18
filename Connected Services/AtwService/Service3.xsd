@@ -3,10 +3,13 @@
   <xs:import schemaLocation="http://77.68.12.158/Service.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
   <xs:complexType name="Read">
     <xs:sequence>
+      <xs:element minOccurs="0" name="AntennaNumber" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="EPC" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Id" type="ser:guid" />
+      <xs:element minOccurs="0" name="Rank" type="xs:int" />
       <xs:element minOccurs="0" name="Reading" nillable="true" type="tns:Reading" />
       <xs:element minOccurs="0" name="ReadingId" type="ser:guid" />
+      <xs:element minOccurs="0" name="SeenCount" type="xs:int" />
       <xs:element minOccurs="0" name="Signal" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Time" type="xs:dateTime" />
     </xs:sequence>
@@ -14,7 +17,6 @@
   <xs:element name="Read" nillable="true" type="tns:Read" />
   <xs:complexType name="Reading">
     <xs:sequence>
-      <xs:element minOccurs="0" name="AntennaNumber" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="EndedDateTime" nillable="true" type="xs:dateTime" />
       <xs:element minOccurs="0" name="FileName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="IPAddress" nillable="true" type="xs:string" />

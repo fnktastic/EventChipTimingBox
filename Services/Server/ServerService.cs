@@ -13,7 +13,7 @@ namespace Services.Server
         private static dynamic binding = null;
         private static dynamic endpoint = null;
 
-        public static async Task SendReadAsync(Guid readingId, DateTime capturedTime, string epc, string signal)
+        public static async Task SendReadAsync(Guid readingId, DateTime capturedTime, string epc, string signal, string antennaNumber, int seenCount, int rank)
         {
             IService service = null;
             using (var channelFactory = new ChannelFactory<IService>(binding, endpoint))
@@ -25,7 +25,17 @@ namespace Services.Server
                 try
                 {
                     service = channelFactory.CreateChannel();
-                    var read = await service.SetReadAsync(new Read() { Id = Guid.NewGuid(), ReadingId = readingId, EPC = epc, Time = capturedTime, Signal = signal });
+                    var read = await service.SetReadAsync(new Read()
+                    {
+                        Id = Guid.NewGuid(),
+                        ReadingId = readingId,
+                        EPC = epc,
+                        Time = capturedTime,
+                        Signal = signal,
+                        AntennaNumber = antennaNumber,
+                        SeenCount = seenCount,
+                        Rank = rank
+                    });
                 }
 
                 catch (Exception ex)
@@ -36,7 +46,7 @@ namespace Services.Server
             }
         }
 
-        public static async Task<Reading> SendReadingAsync(int readerId, string ipAdress)
+        public static async Task<Reading> SendReadingAsync(int readerId, string ipAdress, string readerNumber, string timingPoint)
         {
             IService service = null;
             using (var channelFactory = new ChannelFactory<IService>(binding, endpoint))
@@ -49,7 +59,15 @@ namespace Services.Server
                 {
                     service = channelFactory.CreateChannel();
 
-                    var reading = await service.SetReadingAsync(new Reading() { Id = Guid.NewGuid(), ReaderId = readerId, IPAddress = ipAdress, StartedDateTime = DateTime.UtcNow });
+                    var reading = await service.SetReadingAsync(new Reading()
+                    {
+                        Id = Guid.NewGuid(),
+                        ReaderNumber = readerNumber,
+                        TimingPoint = timingPoint,
+                        ReaderId = readerId,
+                        IPAddress = ipAdress,
+                        StartedDateTime = DateTime.Now
+                    });
 
                     return reading;
                 }
@@ -76,7 +94,7 @@ namespace Services.Server
                 {
                     service = channelFactory.CreateChannel();
 
-                    var reader = await service.SetReaderAsync(new Reader() { Host = host, Port = port  });
+                    var reader = await service.SetReaderAsync(new Reader() { Host = host, Port = port });
 
                     return reader;
                 }

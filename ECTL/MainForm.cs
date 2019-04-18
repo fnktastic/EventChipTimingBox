@@ -554,7 +554,7 @@
             {
                 try
                 {
-                    this.textBoxLastTimeRead.Text = tagRead.Tag.FirstSeenTime.AddHours(1).ToLongTimeString();
+                    this.textBoxLastTimeRead.Text = tagRead.Tag.FirstSeenTime.ToLongTimeString();
                     this.textBoxLastTagRead.Text = tagRead.EPC;
                     this.textBoxTotalTagReads.Text = this._nTotalReads.ToString();
                     this.textBoxUniqueTagReads.Text = this._htTags.Count.ToString();
@@ -2166,7 +2166,7 @@
                 this.DisplayTagRead(read);
                 DateTime firstSeenTime = read.Tag.FirstSeenTime;
                 str = firstSeenTime.ToString("dd/MM/yyyy");
-                str2 = firstSeenTime.AddHours(1).TimeOfDay.ToString();
+                str2 = firstSeenTime.TimeOfDay.ToString();
                 str2 = str2.Substring(0, str2.Length - 4);
                 if (read.Reader == this._reader1)
                 {
@@ -2212,10 +2212,12 @@
                         };
 
                         WriteReadingInFile(readingToSend);
+
                         _server.OnTagRead(readingToSend);
-                        ServerService.SendReadAsync(readingId, read.Tag.FirstSeenTime, read.EPC, read.Tag.PeakRssiInDbm.ToString());
+
+                        ServerService.SendReadAsync(readingId, read.Tag.FirstSeenTime, read.EPC, read.Tag.PeakRssiInDbm.ToString(), read.Tag.AntennaPortNumber.ToString(), read.Tag.SeenCount, read.Tag.Rank);
                     }
-                }
+                }                
             }
         }
 
@@ -2341,6 +2343,8 @@
             }
             this._stopSignal.Reset();
             this._gatingSignal.Set();
+
+            int readerNumber = 0;
             foreach (SpeedwayReader reader in new SpeedwayReader[] { this._reader1, this._reader2 })
             {
                 if (reader != null)
@@ -2351,7 +2355,8 @@
                         string host = reader.ReaderIdentity.ToString();
                         string port = _tcpipPort.Value.ToString();
                         readerId = (await ServerService.SendReaderAsync(host, port)).Id;
-                        var reading = await ServerService.SendReadingAsync(readerId, host);
+                        readerNumber++;
+                        var reading = await ServerService.SendReadingAsync(readerId, host, string.Format("Reader {0}", readerNumber), timingSpotter);
                         readingId = reading.Id;
 
                         reader.Start();

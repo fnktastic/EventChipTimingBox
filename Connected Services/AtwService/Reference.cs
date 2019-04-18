@@ -23,16 +23,25 @@ namespace AtwService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string AntennaNumberField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string EPCField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private System.Guid IdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int RankField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private AtwService.Reading ReadingField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private System.Guid ReadingIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int SeenCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SignalField;
@@ -47,6 +56,19 @@ namespace AtwService {
             }
             set {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string AntennaNumber {
+            get {
+                return this.AntennaNumberField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.AntennaNumberField, value) != true)) {
+                    this.AntennaNumberField = value;
+                    this.RaisePropertyChanged("AntennaNumber");
+                }
             }
         }
         
@@ -77,6 +99,19 @@ namespace AtwService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Rank {
+            get {
+                return this.RankField;
+            }
+            set {
+                if ((this.RankField.Equals(value) != true)) {
+                    this.RankField = value;
+                    this.RaisePropertyChanged("Rank");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public AtwService.Reading Reading {
             get {
                 return this.ReadingField;
@@ -98,6 +133,19 @@ namespace AtwService {
                 if ((this.ReadingIdField.Equals(value) != true)) {
                     this.ReadingIdField = value;
                     this.RaisePropertyChanged("ReadingId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int SeenCount {
+            get {
+                return this.SeenCountField;
+            }
+            set {
+                if ((this.SeenCountField.Equals(value) != true)) {
+                    this.SeenCountField = value;
+                    this.RaisePropertyChanged("SeenCount");
                 }
             }
         }
@@ -148,9 +196,6 @@ namespace AtwService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string AntennaNumberField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private System.Nullable<System.DateTime> EndedDateTimeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -190,19 +235,6 @@ namespace AtwService {
             }
             set {
                 this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string AntennaNumber {
-            get {
-                return this.AntennaNumberField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.AntennaNumberField, value) != true)) {
-                    this.AntennaNumberField = value;
-                    this.RaisePropertyChanged("AntennaNumber");
-                }
             }
         }
         
