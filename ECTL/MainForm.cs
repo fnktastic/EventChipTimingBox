@@ -149,6 +149,11 @@
         private Task readerWorker;
         private Task ftpServer;
         private Task dateTimeServer;
+        private Label label11;
+        private Label label9;
+        private TextBox userIdTextBox;
+        private TextBox raceIdTextBox;
+        private CheckBox sendToServerCheckBox;
         private string recoveryFileName;
 
         public MainForm()
@@ -697,6 +702,11 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.panel3 = new System.Windows.Forms.Panel();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.userIdTextBox = new System.Windows.Forms.TextBox();
+            this.raceIdTextBox = new System.Windows.Forms.TextBox();
+            this.sendToServerCheckBox = new System.Windows.Forms.CheckBox();
             this._btnShutdown = new System.Windows.Forms.Button();
             this._tcpipPort = new System.Windows.Forms.NumericUpDown();
             this.btnPurge = new System.Windows.Forms.Button();
@@ -1741,6 +1751,11 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.label11);
+            this.groupBox7.Controls.Add(this.label9);
+            this.groupBox7.Controls.Add(this.userIdTextBox);
+            this.groupBox7.Controls.Add(this.raceIdTextBox);
+            this.groupBox7.Controls.Add(this.sendToServerCheckBox);
             this.groupBox7.Controls.Add(this._btnShutdown);
             this.groupBox7.Controls.Add(this._tcpipPort);
             this.groupBox7.Controls.Add(this.btnPurge);
@@ -1755,6 +1770,48 @@
             this.groupBox7.TabIndex = 22;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Other Settings";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(224, 126);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(47, 15);
+            this.label11.TabIndex = 30;
+            this.label11.Text = "User ID";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(223, 71);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(48, 15);
+            this.label9.TabIndex = 29;
+            this.label9.Text = "Race ID";
+            // 
+            // userIdTextBox
+            // 
+            this.userIdTextBox.Location = new System.Drawing.Point(224, 144);
+            this.userIdTextBox.Name = "userIdTextBox";
+            this.userIdTextBox.Size = new System.Drawing.Size(186, 23);
+            this.userIdTextBox.TabIndex = 28;
+            // 
+            // raceIdTextBox
+            // 
+            this.raceIdTextBox.Location = new System.Drawing.Point(224, 89);
+            this.raceIdTextBox.Name = "raceIdTextBox";
+            this.raceIdTextBox.Size = new System.Drawing.Size(186, 23);
+            this.raceIdTextBox.TabIndex = 27;
+            // 
+            // sendToServerCheckBox
+            // 
+            this.sendToServerCheckBox.AutoSize = true;
+            this.sendToServerCheckBox.Location = new System.Drawing.Point(224, 39);
+            this.sendToServerCheckBox.Name = "sendToServerCheckBox";
+            this.sendToServerCheckBox.Size = new System.Drawing.Size(152, 19);
+            this.sendToServerCheckBox.TabIndex = 26;
+            this.sendToServerCheckBox.Text = "Send Data to the Server";
+            this.sendToServerCheckBox.UseVisualStyleBackColor = true;
             // 
             // _btnShutdown
             // 
@@ -2215,7 +2272,8 @@
 
                         _server.OnTagRead(readingToSend);
 
-                        ServerService.SendReadAsync(readingId, read.Tag.FirstSeenTime, read.EPC, read.Tag.PeakRssiInDbm.ToString(), read.Tag.AntennaPortNumber.ToString(), read.Tag.SeenCount, read.Tag.Rank);
+                        if(sendToServerCheckBox.Checked)
+                            ServerService.SendReadAsync(readingId, read.Tag.FirstSeenTime, read.EPC, read.Tag.PeakRssiInDbm.ToString(), read.Tag.AntennaPortNumber.ToString());
                     }
                 }                
             }
@@ -2351,13 +2409,16 @@
                 {
                     try
                     {
-                        ServerService.InitProtocol(ProtocolEnum.Http);
-                        string host = reader.ReaderIdentity.ToString();
-                        string port = _tcpipPort.Value.ToString();
-                        readerId = (await ServerService.SendReaderAsync(host, port)).Id;
-                        readerNumber++;
-                        var reading = await ServerService.SendReadingAsync(readerId, host, string.Format("Reader {0}", readerNumber), timingSpotter);
-                        readingId = reading.Id;
+                        if (sendToServerCheckBox.Checked)
+                        {
+                            ServerService.InitProtocol(ProtocolEnum.Http);
+                            string host = reader.ReaderIdentity.ToString();
+                            string port = _tcpipPort.Value.ToString();
+                            readerId = (await ServerService.SendReaderAsync(host, port)).Id;
+                            readerNumber++;
+                            var reading = await ServerService.SendReadingAsync(readerId, host, string.Format("Reader {0}", readerNumber), timingSpotter, userIdTextBox.Text, raceIdTextBox.Text);
+                            readingId = reading.Id;
+                        }
 
                         reader.Start();
                     }

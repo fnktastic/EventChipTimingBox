@@ -6,10 +6,8 @@
       <xs:element minOccurs="0" name="AntennaNumber" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="EPC" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Id" type="ser:guid" />
-      <xs:element minOccurs="0" name="Rank" type="xs:int" />
       <xs:element minOccurs="0" name="Reading" nillable="true" type="tns:Reading" />
       <xs:element minOccurs="0" name="ReadingId" type="ser:guid" />
-      <xs:element minOccurs="0" name="SeenCount" type="xs:int" />
       <xs:element minOccurs="0" name="Signal" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Time" type="xs:dateTime" />
     </xs:sequence>
@@ -21,6 +19,7 @@
       <xs:element minOccurs="0" name="FileName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="IPAddress" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Id" type="ser:guid" />
+      <xs:element minOccurs="0" name="RaceName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Reader" nillable="true" type="tns:Reader" />
       <xs:element minOccurs="0" name="ReaderId" type="xs:int" />
       <xs:element minOccurs="0" name="ReaderNumber" nillable="true" type="xs:string" />
@@ -28,6 +27,7 @@
       <xs:element minOccurs="0" name="StartedDateTime" nillable="true" type="xs:dateTime" />
       <xs:element minOccurs="0" name="TimingPoint" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="TotalReads" type="xs:int" />
+      <xs:element minOccurs="0" name="UserName" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="Reading" nillable="true" type="tns:Reading" />

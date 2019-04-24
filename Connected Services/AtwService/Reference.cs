@@ -32,16 +32,10 @@ namespace AtwService {
         private System.Guid IdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int RankField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private AtwService.Reading ReadingField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private System.Guid ReadingIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int SeenCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SignalField;
@@ -99,19 +93,6 @@ namespace AtwService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int Rank {
-            get {
-                return this.RankField;
-            }
-            set {
-                if ((this.RankField.Equals(value) != true)) {
-                    this.RankField = value;
-                    this.RaisePropertyChanged("Rank");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
         public AtwService.Reading Reading {
             get {
                 return this.ReadingField;
@@ -133,19 +114,6 @@ namespace AtwService {
                 if ((this.ReadingIdField.Equals(value) != true)) {
                     this.ReadingIdField = value;
                     this.RaisePropertyChanged("ReadingId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int SeenCount {
-            get {
-                return this.SeenCountField;
-            }
-            set {
-                if ((this.SeenCountField.Equals(value) != true)) {
-                    this.SeenCountField = value;
-                    this.RaisePropertyChanged("SeenCount");
                 }
             }
         }
@@ -208,6 +176,9 @@ namespace AtwService {
         private System.Guid IdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string RaceNameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private AtwService.Reader ReaderField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -227,6 +198,9 @@ namespace AtwService {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int TotalReadsField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string UserNameField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -286,6 +260,19 @@ namespace AtwService {
                 if ((this.IdField.Equals(value) != true)) {
                     this.IdField = value;
                     this.RaisePropertyChanged("Id");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string RaceName {
+            get {
+                return this.RaceNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.RaceNameField, value) != true)) {
+                    this.RaceNameField = value;
+                    this.RaisePropertyChanged("RaceName");
                 }
             }
         }
@@ -377,6 +364,19 @@ namespace AtwService {
                 if ((this.TotalReadsField.Equals(value) != true)) {
                     this.TotalReadsField = value;
                     this.RaisePropertyChanged("TotalReads");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string UserName {
+            get {
+                return this.UserNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.UserNameField, value) != true)) {
+                    this.UserNameField = value;
+                    this.RaisePropertyChanged("UserName");
                 }
             }
         }

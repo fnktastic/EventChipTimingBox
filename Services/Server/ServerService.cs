@@ -13,7 +13,7 @@ namespace Services.Server
         private static dynamic binding = null;
         private static dynamic endpoint = null;
 
-        public static async void SendReadAsync(Guid readingId, DateTime capturedTime, string epc, string signal, string antennaNumber, int seenCount, int rank)
+        public static async void SendReadAsync(Guid readingId, DateTime capturedTime, string epc, string signal, string antennaNumber)
         {
             IService service = null;
             using (var channelFactory = new ChannelFactory<IService>(binding, endpoint))
@@ -32,9 +32,7 @@ namespace Services.Server
                         EPC = epc,
                         Time = capturedTime,
                         Signal = signal,
-                        AntennaNumber = antennaNumber,
-                        SeenCount = seenCount,
-                        Rank = rank
+                        AntennaNumber = antennaNumber
                     });
                 }
 
@@ -46,7 +44,7 @@ namespace Services.Server
             }
         }
 
-        public static async Task<Reading> SendReadingAsync(int readerId, string ipAdress, string readerNumber, string timingPoint)
+        public static async Task<Reading> SendReadingAsync(int readerId, string ipAdress, string readerNumber, string timingPoint, string userId, string raceId)
         {
             IService service = null;
             using (var channelFactory = new ChannelFactory<IService>(binding, endpoint))
@@ -66,6 +64,8 @@ namespace Services.Server
                         TimingPoint = timingPoint,
                         ReaderId = readerId,
                         IPAddress = ipAdress,
+                        UserName = userId,
+                        RaceName = raceId,
                         StartedDateTime = DateTime.Now
                     });
 
